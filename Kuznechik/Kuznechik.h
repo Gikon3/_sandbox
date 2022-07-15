@@ -6,10 +6,10 @@ class Kuznechik
 public:
 	Kuznechik() = delete;
 	Kuznechik(const std::vector<unsigned char>& key);
-	void scheduleGenerate();
-	std::vector<unsigned char> encript(const std::vector<unsigned char>& plaintext);
-	std::vector<unsigned char> decript(const std::vector<unsigned char>& ciphertext);
 	virtual ~Kuznechik() = default;
+	void scheduleGenerate();
+	virtual std::vector<unsigned char> encript(const std::vector<unsigned char>& plaintext);
+	virtual std::vector<unsigned char> decript(const std::vector<unsigned char>& ciphertext);
 
 public:
 	class Text
@@ -32,6 +32,10 @@ protected:
 	std::vector<Text> keySchedule_;
 
 protected:
+	static const int masterKeySize = 32;
+	static const int textSize = 16;
+	static const int scheduleSize = 10;
+
 	const std::vector<unsigned char> pi_ = {
 		0xFC, 0xEE, 0xDD, 0x11, 0xCF, 0x6E, 0x31, 0x16, 0xFB, 0xC4, 0xFA, 0xDA, 0x23, 0xC5, 0x04, 0x4D,
 		0xE9, 0x77, 0xF0, 0xDB, 0x93, 0x2E, 0x99, 0xBA, 0x17, 0x36, 0xF1, 0xBB, 0x14, 0xCD, 0x5F, 0xC1,
@@ -107,7 +111,7 @@ protected:
 
 	const std::vector<unsigned char> lConstans_ = { 148, 32, 133, 16, 194, 192, 1, 251, 1, 192, 194, 16, 133, 32, 148, 1 };
 
-private:
+protected:
 	virtual Text sTransform(const Text& data);
 	virtual Text sTransformReverse(const Text& data);
 	virtual Text rTransform(const Text& data);

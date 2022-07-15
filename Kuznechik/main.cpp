@@ -1,6 +1,6 @@
 ﻿#include <iostream>
 #include <iomanip>
-#include "Kuznechik.h"
+#include "KuznechikMask.h"
 
 // TODO разобраться с итераторами
 template <typename T>
@@ -23,7 +23,7 @@ void doIt(const std::vector<unsigned char>& key, bool decript,
     hexPrint(plaintext.begin(), plaintext.end());
     std::cout << std::endl;
 
-    Kuznechik aKuznechik(key);
+    KuznechikMask aKuznechik(key);
     aKuznechik.scheduleGenerate();
     std::vector<unsigned char> outputCipher = !decript ? aKuznechik.encript(plaintext) : aKuznechik.decript(plaintext);
     std::cout << std::setw(w) << "Cipher: ";
