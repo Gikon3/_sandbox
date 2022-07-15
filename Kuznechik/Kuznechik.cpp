@@ -1,17 +1,13 @@
 #include "Kuznechik.h"
 
-#define MASTER_KEY_SIZE 32
-#define TEXT_SIZE       16
-#define SCHEDULE_SIZE   10
-
 Kuznechik::Text::Text() :
-	text_(TEXT_SIZE)
+	text_(textSize)
 {
 }
 
 Kuznechik::Text::Text(const std::vector<unsigned char>& text)
 {
-	if (text.size() != TEXT_SIZE)
+	if (text.size() != textSize)
 		throw "Size";
 	text_ = text;
 }
@@ -46,12 +42,12 @@ size_t Kuznechik::Text::size() const
 Kuznechik::Kuznechik(const std::vector<unsigned char>& key) :
 	scheduleValid_(false), keySchedule_(2)
 {
-	if (key.size() != MASTER_KEY_SIZE)
+	if (key.size() != masterKeySize)
 		throw "Size";
 
-	for (int i = 0; i < TEXT_SIZE; ++i) {
+	for (int i = 0; i < textSize; ++i) {
 		keySchedule_[0][i] = key[i];
-		keySchedule_[1][i] = key[TEXT_SIZE + i];
+		keySchedule_[1][i] = key[textSize + i];
 	}
 }
 
@@ -133,8 +129,8 @@ Kuznechik::Text Kuznechik::rTransform(const Text& data)
 
 Kuznechik::Text Kuznechik::rTransformReverse(const Text& data)
 {
-	unsigned char xorByte = gfMultiplier(data[15], lConstans_[0]);
 	Text out;
+	unsigned char xorByte = gfMultiplier(data[15], lConstans_[0]);
 	for (int i = 0; i < 15; ++i) {
 		out[i] = data[i + 1];
 		xorByte ^= gfMultiplier(data[i], lConstans_[15 - i]);
