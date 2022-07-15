@@ -40,6 +40,11 @@ unsigned char& Kuznechik::Text::operator[](int index)
 	return text_[index];
 }
 
+Kuznechik::Text::operator std::vector<unsigned char>() const
+{
+	return text_;
+}
+
 size_t Kuznechik::Text::size() const
 {
 	return text_.size();
@@ -89,10 +94,7 @@ std::vector<unsigned char> Kuznechik::encript(const std::vector<unsigned char>& 
 		out = lTransform(out);
 	}
 	out ^= keySchedule_[9];
-	std::vector<unsigned char> outVector(16);
-	for (int i = 0; i < out.size(); ++i)
-		outVector[i] = out[i];
-	return outVector;
+	return out;
 }
 
 std::vector<unsigned char> Kuznechik::decript(const std::vector<unsigned char>& ciphertext)
@@ -105,10 +107,7 @@ std::vector<unsigned char> Kuznechik::decript(const std::vector<unsigned char>& 
 		out = sTransformReverse(out);
 		out ^= keySchedule_[i];
 	}
-	std::vector<unsigned char> outVector(16);
-	for (int i = 0; i < out.size(); ++i)
-		outVector[i] = out[i];
-	return outVector;
+	return out;
 }
 
 Kuznechik::Text Kuznechik::sTransform(const Text& data)
