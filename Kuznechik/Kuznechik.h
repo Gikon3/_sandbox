@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <exception>
 
 class Kuznechik
 {
@@ -12,6 +13,24 @@ public:
 	virtual std::vector<unsigned char> decript(const std::vector<unsigned char>& ciphertext);
 
 public:
+	class Exception : public std::exception
+	{
+	public:
+		Exception(const char* const& message) : exception(message) {}
+	};
+
+	class InvalidKeySize : public Exception
+	{
+	public:
+		InvalidKeySize() : Exception("Invalid key size") {}
+	};
+
+	class InvalidBlockSize : public Exception
+	{
+	public:
+		InvalidBlockSize() : Exception("Invalid block size") {}
+	};
+
 	class Text
 	{
 	public:

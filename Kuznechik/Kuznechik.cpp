@@ -8,7 +8,7 @@ Kuznechik::Text::Text() :
 Kuznechik::Text::Text(const std::vector<unsigned char>& text)
 {
 	if (text.size() != textSize)
-		throw "Size";
+		throw InvalidBlockSize();
 	text_ = text;
 }
 
@@ -43,7 +43,7 @@ Kuznechik::Kuznechik(const std::vector<unsigned char>& key) :
 	scheduleValid_(false), keySchedule_(2)
 {
 	if (key.size() != masterKeySize)
-		throw "Size";
+		throw InvalidKeySize();
 
 	for (int i = 0; i < textSize; ++i) {
 		keySchedule_[0][i] = key[i];

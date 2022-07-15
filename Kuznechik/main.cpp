@@ -50,8 +50,13 @@ int main()
         0x7F, 0x67, 0x9D, 0x90, 0xBE, 0xBC, 0x24, 0x30, 0x5A, 0x46, 0x8D, 0x42, 0xB9, 0xD4, 0xED, 0xCD,
     };
 
-    doIt(key, false, plaintext, ciphertext);
-    doIt(key, true, ciphertext, plaintext);
+    try {
+        doIt(key, false, plaintext, ciphertext);
+        doIt(key, true, ciphertext, plaintext);
+    }
+    catch (const Kuznechik::Exception& exc) {
+        std::cout << "Exception: " << exc.what() << std::endl;
+    }
 
     return 0;
 }
