@@ -1,16 +1,23 @@
 #include "Kuznechik.h"
 
+#define MASTER_KEY_SIZE 32
+#define TEXT_SIZE       16
+#define SCHEDULE_SIZE   10
+
 Kuznechik::Text::Text() :
-	text_()
+	text_(TEXT_SIZE)
 {
 }
 
-Kuznechik::Text::Text(const std::array<unsigned char, 16>& text) :
-	text_(text)
+Kuznechik::Text::Text(const std::vector<unsigned char>& text)
 {
+	if (text.size() != TEXT_SIZE)
+		throw "Size";
+	text_ = text;
 }
 
-Kuznechik::Text::Text(const unsigned char* text)
+Kuznechik::Text::Text(const unsigned char* text) :
+	text_(TEXT_SIZE)
 {
 	for (int i = 0; i < text_.size(); ++i)
 		text_[i] = text[i];
@@ -38,12 +45,15 @@ size_t Kuznechik::Text::size() const
 	return text_.size();
 }
 
-Kuznechik::Kuznechik(const std::array<unsigned char, 32>& key) :
-	scheduleValid_(false), keySchedule_()
+Kuznechik::Kuznechik(const std::vector<unsigned char>& key) :
+	scheduleValid_(false), keySchedule_(2)
 {
-	for (int i = 0; i < 16; ++i) {
+	if (key.size() != MASTER_KEY_SIZE)
+		throw "Size";
+
+	for (int i = 0; i < TEXT_SIZE; ++i) {
 		keySchedule_[0][i] = key[i];
-		keySchedule_[1][i] = key[16 + i];
+		keySchedule_[1][i] = key[TEXT_SIZE + i];
 	}
 }
 
@@ -61,9 +71,8 @@ void Kuznechik::scheduleGenerate()
 			keyB = keyA;
 			keyA = temp;
 			if ((i + 1) % 8 == 0) {
-				const int index = (i + 1) / 8 - 1;
-				keySchedule_[2 + index * 2] = keyA;
-				keySchedule_[3 + index * 2] = keyB;
+				keySchedule_.push_back(keyA);
+				keySchedule_.push_back(keyB);
 			}
 		}
 		scheduleValid_ = true;
@@ -121,13 +130,13 @@ Kuznechik::Text Kuznechik::sTransformReverse(const Text& data)
 Kuznechik::Text Kuznechik::rTransform(const Text& data)
 {
 	unsigned char xorByte = 0;
-	Text out;
-	for (int i = 14; i >= 0; --i) {
-		out[i + 1] = data[i];
+	for (int i = 0; i < 16; ++i)
 		xorByte ^= gfMultiplier(data[i], lConstans_[i]);
-	}
-	xorByte ^= gfMultiplier(data[15], lConstans_[15]);
+
+	Text out;
 	out[0] = xorByte;
+	for (int i = 0; i < 15; ++i)
+		out[i + 1] = data[i];
 	return out;
 }
 
@@ -172,4 +181,21 @@ unsigned char Kuznechik::gfMultiplier(unsigned char a, unsigned char b)
 		b >>= 1;
 	}
 	return out;
+}
+
+unsigned char Kuznechik::gfPow(unsigned char value, int n)
+{
+	if (n == 0)
+		return 1;
+
+	if (n % 2 == 0)
+		return gfPow(gfMultiplier(value, value), n / 2);
+
+	unsigned char square = gfMultiplier(value, value);
+	return gfMultiplier(gfPow(square, n / 2), value);
+}
+
+unsigned char Kuznechik::gfInverse(unsigned char value)
+{
+	return gfPow(value, 254);
 }

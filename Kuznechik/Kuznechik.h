@@ -1,12 +1,11 @@
 #pragma once
 #include <vector>
-#include <array>
 
 class Kuznechik
 {
 public:
 	Kuznechik() = delete;
-	Kuznechik(const std::array<unsigned char, 32>& key);
+	Kuznechik(const std::vector<unsigned char>& key);
 	void scheduleGenerate();
 	std::vector<unsigned char> encript(const std::vector<unsigned char>& plaintext);
 	std::vector<unsigned char> decript(const std::vector<unsigned char>& ciphertext);
@@ -17,7 +16,7 @@ public:
 	{
 	public:
 		Text();
-		Text(const std::array<unsigned char, 16>& text);
+		Text(const std::vector<unsigned char>& text);
 		Text(const unsigned char* text);
 		Text& operator^=(const Text& rhs);
 		unsigned char operator[](int index) const;
@@ -25,12 +24,12 @@ public:
 		size_t size() const;
 
 	private:
-		std::array<unsigned char, 16> text_;
+		std::vector<unsigned char> text_;
 	};
 
 protected:
 	bool scheduleValid_;
-	std::array<Text, 10> keySchedule_;
+	std::vector<Text> keySchedule_;
 
 protected:
 	const unsigned char pi_[256] = {
@@ -108,19 +107,21 @@ protected:
 
 	const unsigned char lConstans_[16] = { 148, 32, 133, 16, 194, 192, 1, 251, 1, 192, 194, 16, 133, 32, 148, 1 };
 
-protected:
-	Text sTransform(const Text& data);
-	Text sTransformReverse(const Text& data);
-	Text rTransform(const Text& data);
-	Text rTransformReverse(const Text& data);
-	Text lTransform(const Text& data);
-	Text lTransformReverse(const Text& data);
-	unsigned char gfMultiplier(unsigned char a, unsigned char b);
+private:
+	virtual Text sTransform(const Text& data);
+	virtual Text sTransformReverse(const Text& data);
+	virtual Text rTransform(const Text& data);
+	virtual Text rTransformReverse(const Text& data);
+	virtual Text lTransform(const Text& data);
+	virtual Text lTransformReverse(const Text& data);
+	virtual unsigned char gfMultiplier(unsigned char a, unsigned char b);
+	virtual unsigned char gfPow(unsigned char value, int n);
+	virtual unsigned char gfInverse(unsigned char value);
 };
 
-//Kuznechik::Text operator^(const Kuznechik::Text& lhs, const Kuznechik::Text& rhs)
-//{
-//	Kuznechik::Text out = lhs;
-//	out ^= rhs;
-//	return out;
-//}
+inline Kuznechik::Text operator^(const Kuznechik::Text& lhs, const Kuznechik::Text& rhs)
+{
+	Kuznechik::Text out = lhs;
+	out ^= rhs;
+	return out;
+}
