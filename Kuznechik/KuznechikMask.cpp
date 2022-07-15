@@ -30,14 +30,15 @@ std::vector<unsigned char> KuznechikMask::encript(const std::vector<unsigned cha
 std::vector<unsigned char> KuznechikMask::decript(const std::vector<unsigned char>& ciphertext)
 {
 	scheduleGenerate();
-	Text out = ciphertext;
-	out ^= keySchedule_[9] ^ mask_[0] ^ mask_[1];
+	Text out = ciphertext ^ lTransform(mask_[0]);
+	out ^= keySchedule_[9] ^ lTransform(mask_[1]);
 	for (int i = 8; i >= 0; --i) {
-		out = lTransformReverse(out ^ lTransform(mask_[0] ^ mask_[1]));
-		out = sTransformReverse(out ^ mask_[0]);
-		out ^= keySchedule_[i] ^ mask_[1];
+		out = lTransformReverse(out);
+		out = sTransformReverse(out ^ mask_[0] ^ mask_[1]);
+		out ^= lTransform(mask_[0]);
+		out ^= keySchedule_[i] ^ lTransform(mask_[1]);
 	}
-	return out ^ mask_[0] ^ mask_[1];
+	return out ^ lTransform(mask_[0]) ^ lTransform(mask_[1]);
 }
 
 Kuznechik::Text KuznechikMask::rTransform(const Text& data)
