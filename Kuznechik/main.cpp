@@ -2,9 +2,8 @@
 #include <iomanip>
 #include "KuznechikMask.h"
 
-// TODO разобраться с итераторами
-template <typename T>
-void hexPrint(T begin, T end)
+template<class OutIt>
+void hexPrint(OutIt begin, OutIt end)
 {
     std::cout << "0x" << std::setbase(16);
     for (auto i = begin; i != end; ++i)
