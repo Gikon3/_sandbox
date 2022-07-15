@@ -38,7 +38,7 @@ std::vector<unsigned char> KuznechikMask::decript(const std::vector<unsigned cha
 		out ^= lTransform(mask_[0]);
 		out ^= keySchedule_[i] ^ lTransform(mask_[1]);
 	}
-	return out ^ lTransform(mask_[0]) ^ lTransform(mask_[1]);
+	return out ^ lTransform(mask_[0] ^ mask_[1]);
 }
 
 Kuznechik::Text KuznechikMask::rTransform(const Text& data)
