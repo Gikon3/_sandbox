@@ -16,13 +16,6 @@ Kuznechik::Text::Text(const std::vector<unsigned char>& text)
 	text_ = text;
 }
 
-Kuznechik::Text::Text(const unsigned char* text) :
-	text_(TEXT_SIZE)
-{
-	for (int i = 0; i < text_.size(); ++i)
-		text_[i] = text[i];
-}
-
 Kuznechik::Text& Kuznechik::Text::operator^=(const Text& rhs)
 {
 	for (int i = 0; i < text_.size(); ++i)
@@ -68,8 +61,7 @@ void Kuznechik::scheduleGenerate()
 		Text keyA = keySchedule_[0];
 		Text keyB = keySchedule_[1];
 		for (int i = 0; i < 32; ++i) {
-			Text temp = keyA;
-			temp ^= iterConstans_[i];
+			Text temp = keyA ^ iterConstants_[i];
 			temp = sTransform(temp);
 			temp = lTransform(temp);
 			temp ^= keyB;
@@ -87,7 +79,7 @@ void Kuznechik::scheduleGenerate()
 std::vector<unsigned char> Kuznechik::encript(const std::vector<unsigned char>& plaintext)
 {
 	scheduleGenerate();
-	Text out = plaintext.data();
+	Text out = plaintext;
 	for (int i = 0; i < 9; ++i) {
 		out ^= keySchedule_[i];
 		out = sTransform(out);
@@ -100,7 +92,7 @@ std::vector<unsigned char> Kuznechik::encript(const std::vector<unsigned char>& 
 std::vector<unsigned char> Kuznechik::decript(const std::vector<unsigned char>& ciphertext)
 {
 	scheduleGenerate();
-	Text out = ciphertext.data();
+	Text out = ciphertext;
 	out ^= keySchedule_[9];
 	for (int i = 8; i >= 0; --i) {
 		out = lTransformReverse(out);

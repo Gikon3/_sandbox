@@ -17,7 +17,6 @@ public:
 	public:
 		Text();
 		Text(const std::vector<unsigned char>& text);
-		Text(const unsigned char* text);
 		Text& operator^=(const Text& rhs);
 		unsigned char operator[](int index) const;
 		unsigned char& operator[](int index);
