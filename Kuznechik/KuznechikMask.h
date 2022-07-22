@@ -17,4 +17,5 @@ protected:
 private:
 	Text rTransform(const Text& data) override;
 	Text rTransformReverse(const Text& data) override;
+	void masksGenerate();
 };

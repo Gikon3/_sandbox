@@ -5,18 +5,12 @@
 KuznechikMask::KuznechikMask(const std::vector<unsigned char>& key) :
 	Kuznechik(key)
 {
-	std::mt19937 engine;
-	engine.seed(std::time(nullptr));
-	for (int i = 0; i < 10; ++i) {
-		for (int j = 0; j < textSize; ++j)
-			mask_[i][j] = static_cast<unsigned char>(engine());
-		maskL_[i] = static_cast<unsigned char>(engine());
-	}
 }
 
 std::vector<unsigned char> KuznechikMask::encript(const std::vector<unsigned char>& plaintext)
 {
 	scheduleGenerate();
+	masksGenerate();
 	Text out = plaintext;
 	for (int i = 0; i < sizeof(mask_) / sizeof(mask_[0]); ++i)
 		out ^= mask_[i];
@@ -39,6 +33,7 @@ std::vector<unsigned char> KuznechikMask::encript(const std::vector<unsigned cha
 std::vector<unsigned char> KuznechikMask::decript(const std::vector<unsigned char>& ciphertext)
 {
 	scheduleGenerate();
+	masksGenerate();
 	Text out = ciphertext;
 	out ^= keySchedule_[9] ^ lTransform(mask_[0]);
 	for (int i = 8; i >= 0; --i) {
@@ -83,4 +78,15 @@ Kuznechik::Text KuznechikMask::rTransformReverse(const Text& data)
 	}
 	out[15] = xorByte;
 	return out;
+}
+
+void KuznechikMask::masksGenerate()
+{
+	std::mt19937 engine;
+	engine.seed(std::time(nullptr));
+	for (int i = 0; i < 10; ++i) {
+		for (int j = 0; j < textSize; ++j)
+			mask_[i][j] = static_cast<unsigned char>(engine());
+		maskL_[i] = static_cast<unsigned char>(engine());
+	}
 }
