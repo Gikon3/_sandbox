@@ -11,7 +11,8 @@ public:
 	std::vector<unsigned char> decript(const std::vector<unsigned char>& ciphertext) override;
 
 protected:
-	Text mask_[3];
+	Text mask_[10];
+	Text maskL_;
 
 private:
 	Text rTransform(const Text& data) override;
