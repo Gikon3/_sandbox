@@ -19,6 +19,15 @@ std::vector<unsigned char> KuznechikMask::encript(const std::vector<unsigned cha
 
 		for (int j = 0; j < 9 - i; ++j)
 			out ^= mask_[j];
+
+		std::mt19937 engine;
+		for (int j = 0; j < 255; ++j) {
+			Text temp;
+			engine.seed(std::time(nullptr));
+			temp ^= mask_[engine() % 10];
+			temp = sTransform(temp);
+		}
+
 		out = sTransform(out);
 
 		Text temp;

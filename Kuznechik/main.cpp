@@ -1,5 +1,7 @@
 ﻿#include <iostream>
 #include <iomanip>
+#include <chrono>
+#include <bitset>
 #include "KuznechikMask.h"
 
 template<class OutIt>
@@ -50,7 +52,12 @@ int main()
     };
 
     try {
+        auto begin = std::chrono::steady_clock::now();
         doIt(key, false, plaintext, ciphertext);
+        auto end = std::chrono::steady_clock::now();
+        auto elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - begin);
+        std::cout << "The time: " << std::dec << elapsed_ms.count() << " ms\n\n";
+
         doIt(key, true, ciphertext, plaintext);
     }
     catch (const Kuznechik::Exception& exc) {
